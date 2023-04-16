@@ -44,7 +44,6 @@ void Torpedo::Draw()
 
 void Torpedo::Update()
 {
-	GetTransform()->position.x += m_speed;
 }
 
 void Torpedo::Clean()
