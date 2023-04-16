@@ -119,7 +119,7 @@ void PlayScene::Start()
 	AddChild(m_pTarget, 2);
 
 	//m_pStarShip = new CloseCombatEnemy();
-	m_pStarShip = new RangedCombatEnemy();
+	m_pStarShip = new RangedCombatEnemy(this);
 	m_pStarShip->GetTransform()->position = glm::vec2(400.0f, 40.0f);
 	AddChild(m_pStarShip, 2);
 
@@ -149,6 +149,29 @@ void PlayScene::Start()
 	SoundManager::Instance().PlayMusic("mutara");
 
 	ImGuiWindowFrame::Instance().SetGuiFunction(std::bind(&PlayScene::GUI_Function, this));
+}
+
+void PlayScene::SpawnEnemyTorpedo()
+{
+	//set spam point front of our d7
+	glm::vec2 spawn_point = m_pStarShip->GetTransform()->position + m_pStarShip->GetCurrentDirection() * 30.0f;
+
+	//set the direction of the torpedo
+	glm::vec2 torpedo_direction = Util::Normalize(m_pTarget->GetTransform()->position - spawn_point);
+
+	//spawn the torpedo
+	m_pTorpedoesK.push_back(new TorpedoK(5.0f, torpedo_direction));
+	m_pTorpedoesK.back()->GetTransform()->position = spawn_point;
+	SoundManager::Instance().SetSoundVolume(50);
+	SoundManager::Instance().PlaySoundFX("torpedo_k");
+	AddChild(m_pTorpedoesK.back(), 2);
+
+
+}
+
+Target* PlayScene::GetTarget() const
+{
+	return m_pTarget;
 }
 
 void PlayScene::GUI_Function()

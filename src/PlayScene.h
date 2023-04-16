@@ -14,6 +14,8 @@
 
 // New for Lab 7.1
 #include "Background.h"
+#include "Torpedo.h"
+#include "TorpedoK.h"
 
 
 
@@ -29,6 +31,12 @@ public:
 	virtual void Clean() override;
 	virtual void HandleEvents() override;
 	virtual void Start() override;
+
+
+	//lab 8
+	void SpawnEnemyTorpedo();
+	Target* GetTarget() const;
+
 private:
 	// IMGUI Function
 	void GUI_Function();
@@ -73,6 +81,11 @@ private:
 
 	// Decision Tree
 	//DecisionTree* m_decisionTree;
+
+
+	//lab 8
+	std::vector<Torpedo*> m_pTorpedoes;
+	std::vector<TorpedoK*> m_pTorpedoesK;
 };
 
 #endif /* defined (__PLAY_SCENE__) */
