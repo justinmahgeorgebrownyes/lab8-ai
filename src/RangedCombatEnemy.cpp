@@ -16,7 +16,7 @@ RangedCombatEnemy::RangedCombatEnemy(Scene* scene) : m_maxSpeed(20.0f),
 m_turnRate(5.0f), m_accelerationRate(2.0f), m_startPosition(glm::vec2(300.0f, 500.0f)),
 m_fireCounter(0), m_fireCounterMax(60), m_pScene(scene)
 {
-	TextureManager::Instance().Load("../Assets/textures/reliant_small.png", "ranged_combat_enemy");
+	TextureManager::Instance().Load("../Assets/textures/d7_small.png", "ranged_combat_enemy");
 
 	const auto size = TextureManager::Instance().GetTextureSize("ranged_combat_enemy");
 	SetWidth(static_cast<int>(size.x));
@@ -135,13 +135,13 @@ void RangedCombatEnemy::Seek()
 	GetRigidBody()->acceleration = GetCurrentDirection() * GetAccelerationRate();
 }
 
-void RangedCombatEnemy::LookWhereYoureGoing(const glm::vec2 target_direction)
+void RangedCombatEnemy::LookWhereYoureGoing(const glm::vec2 target_direction, const bool direction_hack)
 {
 
 
 
 
-	float target_rotation = Util::SignedAngle(GetCurrentDirection(), target_direction) -90.0f;
+	float target_rotation = Util::SignedAngle(GetCurrentDirection(), target_direction) - ((direction_hack) ? 90.0f : 0.0f); //-90.0f
 
 	float last_rotation = target_rotation;
 
@@ -255,7 +255,7 @@ void RangedCombatEnemy::Attack()
 
 	//lab 8
 	glm::vec2 target_direction = Util::Normalize(scene->GetTarget()->GetTransform()->position - GetTransform()->position);
-	LookWhereYoureGoing(target_direction);
+	LookWhereYoureGoing(target_direction, false);
 
 	//wait for number of frames firintg = frame dealay
 	if (m_fireCounter++ % m_fireCounterMax == 0) {

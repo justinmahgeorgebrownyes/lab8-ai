@@ -73,6 +73,16 @@ void PlayScene::Update()
 
 	// Make a Decision
 //	m_decisionTree->MakeDecision();
+
+
+	//collison check between tarpeodok and target
+	for (auto torpedo : m_pTorpedoesK) {
+
+		CollisionManager::CircleAABBCheck(torpedo, m_pTarget);
+
+
+	}
+
 }
 
 void PlayScene::Clean()
@@ -97,13 +107,44 @@ void PlayScene::HandleEvents()
 	if (EventManager::Instance().IsKeyDown(SDL_SCANCODE_2))
 	{
 		Game::Instance().ChangeSceneState(SceneState::END);
+	}	
+	
+	if (EventManager::Instance().KeyPressed(SDL_SCANCODE_F))
+	{
+		//torpedo will fie
+		m_pTorpedoes.push_back(new Torpedo(5.0f));
+		m_pTarget->SetCurrentDirection(glm::vec2(1.0f, 0.0f));
+		m_pTorpedoes.back()->GetTransform()->position = m_pTarget->GetTransform()->position + m_pTarget->GetCurrentDirection() * 30.0f;
+		SoundManager::Instance().SetSoundVolume(50);
+		SoundManager::Instance().PlaySoundFX("torpedo");
+		AddChild(m_pTorpedoes.back(), 2);
+		//Game::Instance().ChangeSceneState(SceneState::END);
+	}
+
+	if (EventManager::Instance().KeyPressed(SDL_SCANCODE_K))
+	{
+		m_pStarShip->TakeDamage(10);
+		m_pStarShip->GetTree()->GetEnemyHitNode()->SetIsHit(true);
+		std::cout << "Starship at: " << m_pStarShip->GetHealth() << "% " << std::endl;
+		//Game::Instance().ChangeSceneState(SceneState::END);
+	}
+
+	if (EventManager::Instance().KeyPressed(SDL_SCANCODE_R))
+	{
+		m_pStarShip->SetHealth(100);
+		m_pStarShip->GetTree()->GetEnemyHitNode()->SetIsHit(false);
+		m_pStarShip->GetTree()->GetPlayerDetectedNode()->SetDetected(false);
+		m_pStarShip->GetTransform()->position = glm::vec2(40.0f, 40.0f);
+		std::cout << "Conditions Reset" << std::endl;
+
+		//Game::Instance().ChangeSceneState(SceneState::END);
 	}
 }
 
 void PlayScene::Start()
 {
 	// Set GUI Title
-	m_guiTitle = "Lab 7 - Part 1";
+	m_guiTitle = "Lab 8";
 
 	// Setup a few more fields
 	m_LOSMode = LOSMode::TARGET;
@@ -140,13 +181,16 @@ void PlayScene::Start()
 
 	SoundManager::Instance().Load("../Assets/Audio/yay.ogg", "yay", SoundType::SOUND_SFX);
 	SoundManager::Instance().Load("../Assets/Audio/thunder.ogg", "thunder", SoundType::SOUND_SFX);
+	SoundManager::Instance().Load("../Assets/Audio/torpedo.ogg", "torpedo", SoundType::SOUND_SFX);
+	SoundManager::Instance().Load("../Assets/Audio/torpedo_k.ogg", "torpedo_k", SoundType::SOUND_SFX);
 
 	// Preload Music
 	SoundManager::Instance().Load("../Assets/Audio/Mutara.mp3", "mutara", SoundType::SOUND_MUSIC);
+	SoundManager::Instance().Load("../Assets/Audio/Klingon.mp3", "klingon", SoundType::SOUND_MUSIC);
 	SoundManager::Instance().SetMusicVolume(16);
 
 	// Play Music
-	SoundManager::Instance().PlayMusic("mutara");
+	SoundManager::Instance().PlayMusic("klingon");
 
 	ImGuiWindowFrame::Instance().SetGuiFunction(std::bind(&PlayScene::GUI_Function, this));
 }
